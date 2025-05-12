@@ -15,9 +15,11 @@ import { styled } from '@mui/material/styles';
 import { useMutation } from '@tanstack/react-query';
 import { postNewGoal } from '../../api/goalsApi';
 function AddGoalForm(): JSX.Element {
+
   const {
     control,
     handleSubmit,
+      reset,
     formState: { errors, isSubmitting },
   } = useForm<FormGoal>({
     defaultValues: {
@@ -33,10 +35,12 @@ function AddGoalForm(): JSX.Element {
       return postNewGoal(data);
     },
     onSuccess: (newGoal: Goal) => {
+
       console.log('created a new Goal', newGoal);
+      reset()// we provided default values to use form already
     },
     onError: (error: Error) => {
-      console.log(error);
+      console.log('we have an error',error);
     },
   });
 
