@@ -72,21 +72,21 @@ function AddGoalForm(): JSX.Element {
             <ControlledTextField
               control={control}
               name={'title'}
-              rules={{ required: true }}
+              rules={{ required: "title is required" }}
               label={'Title'}
               helperText={'Enter title'}
             />
             <ControlledTextField
               control={control}
               name={'description'}
-              rules={{ required: true }}
+              rules={{ required: "description is required" }}
               label={'Description'}
               helperText={'Describe your goal'}
             />
             <ControlledTextField
               control={control}
               name={'category'}
-              rules={{ required: true }}
+              rules={{ required: "category is required" }}
               label={'Category'}
               helperText={'choose goal category'}
             />
