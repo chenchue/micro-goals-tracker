@@ -1,4 +1,4 @@
-import { FormGoal, Goal } from '../types/goal';
+import { FormGoal, Goal } from '@shared';
 
 const goals: Goal[] = [];
 
@@ -7,4 +7,8 @@ export const addGoalToDB = (goalCandidate: FormGoal): Goal => {
   const goal: Goal = { ...goalCandidate, id: goalId };
   goals.push(goal);
   return goal;
+};
+
+export const getGoalsFromDB = (): Goal[] => {
+  return goals;
 };

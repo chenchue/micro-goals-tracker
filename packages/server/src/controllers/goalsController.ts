@@ -1,24 +1,34 @@
+// goalsController.ts
 import { Request, Response, NextFunction } from 'express';
-import { FormGoal, formGoalSchema, Goal, goalSchema } from '@shared';
-import { addGoalToDB } from '../services/goalsService';
-import { SafeParseReturnType } from 'zod';
+import { formGoalSchema, Goal } from '@shared';
+import { addGoalToDB, getGoalsFromDB } from '../services/goalsService';
 
-export async function createGoal(req: Request, res: Response, next: NextFunction) {
+export async function createGoal(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const parsedGoal = formGoalSchema.safeParse(req.body);
 
-    // Defensive validation
-
     if (!parsedGoal.success) {
-      return res.status(400).json({
+      res.status(400).json({
         message: 'Validation failed',
         errors: parsedGoal.error.flatten().fieldErrors,
       });
+      return;
     }
 
     const newGoal: Goal = addGoalToDB(parsedGoal.data);
-    return res.status(201).json(newGoal);
+    res.status(201).json(newGoal);
+    return;
   } catch (err) {
-    return next(err); // Pass error to global error middleware
+    return next(err);
+  }
+}
+
+export async function getGoals(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const goals = getGoalsFromDB();
+    res.status(200).json({ goals: goals });
+    return;
+  } catch (err) {
+    return next(err);
   }
 }

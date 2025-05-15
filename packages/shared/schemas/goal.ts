@@ -8,7 +8,7 @@ export const formGoalSchema = z.object({
 });
 
 export const goalSchema = formGoalSchema.extend({
-    id: z.string().uuid()
+    id: z.number().min(1),
 });
 
 export type FormGoal = z.infer<typeof formGoalSchema>;

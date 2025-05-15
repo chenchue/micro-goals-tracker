@@ -1,6 +1,6 @@
 import {CardHeader, CardContent, Card, CardActions, FormControlLabel, Checkbox} from '@mui/material'
 import {JSX} from "react";
-import {Goal} from "../../types/goal";
+import {Goal} from "@shared";
 
 interface GoalCardProps {
     goal:Goal,

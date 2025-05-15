@@ -6,17 +6,18 @@ import {
   FormControlLabel,
   Button,
 } from '@mui/material';
-import { JSX } from 'react';
+import {JSX, useEffect} from 'react';
 import { DevTool } from '@hookform/devtools';
 import { SubmitHandler, useForm, Controller } from 'react-hook-form';
 import type { FormGoal, Goal } from '@shared';
 import ControlledTextField from './ControlledTextField';
 import { styled } from '@mui/material/styles';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation,useQueryClient } from '@tanstack/react-query';
 import { postNewGoal } from '../../api/goalsApi';
 function AddGoalForm(): JSX.Element {
 
   const {
+    watch,
     control,
     handleSubmit,
       reset,
@@ -30,6 +31,8 @@ function AddGoalForm(): JSX.Element {
     },
   });
 
+  const queryClient = useQueryClient();
+
   const { mutate } = useMutation<Goal, Error, FormGoal, unknown>({
     mutationFn: (data: FormGoal): Promise<Goal> => {
       return postNewGoal(data);
@@ -37,7 +40,9 @@ function AddGoalForm(): JSX.Element {
     onSuccess: (newGoal: Goal) => {
 
       console.log('created a new Goal', newGoal);
+      queryClient.invalidateQueries({'queryKey':['goals']})
       reset()// we provided default values to use form already
+
     },
     onError: (error: Error) => {
       console.log('we have an error',error);
@@ -63,6 +68,11 @@ function AddGoalForm(): JSX.Element {
   const StyledButton = styled(Button)({
     justifyContent: 'flex-start',
   });
+
+  useEffect(() => {
+    console.log('Tracked value for isDone:', watch('isDone'));
+  }, [watch('isDone')]);
+
   return (
     <div>
       <Box marginBlock={2}>hello form!</Box>
@@ -91,22 +101,23 @@ function AddGoalForm(): JSX.Element {
               helperText={'choose goal category'}
             />
             <Box marginBottom={2}>
-              <FormControlLabel
-                required
-                control={
+
                   <Controller
                     control={control}
                     name={'isDone'}
                     render={({ field: { onChange, onBlur, value } }) => (
+                        <FormControlLabel
+                            required
+                            label="Is Done"
+                            control={
                       <Checkbox
                         checked={value}
-                        onChange={onChange}
+                        onChange={(e)=>{
+                          onChange(e.target.checked);}}
                         onBlur={onBlur}
-                      />
-                    )}
+                      />}
                   />
-                }
-                label="Is Done"
+                    )}
               />
             </Box>
           </FormControl>

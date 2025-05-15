@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createGoal } from '../controllers/goalsController';
+import { createGoal, getGoals } from '../controllers/goalsController';
 
 const router: Router = Router();
 
@@ -8,5 +8,7 @@ const router: Router = Router();
 // @access  Public (if no auth)
 // @returns 201 + goal JSON, or 500 error
 router.route('/').post(createGoal);
+
+router.route('/').get(getGoals);
 
 export default router;
