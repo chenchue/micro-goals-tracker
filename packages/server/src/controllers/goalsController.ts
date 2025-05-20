@@ -1,7 +1,7 @@
 // goalsController.ts
 import { Request, Response, NextFunction } from 'express';
-import { formGoalSchema, Goal } from '@shared';
-import { addGoalToDB, getGoalsFromDB } from '../services/goalsService';
+import { favoriteOnlySchema, formGoalSchema, Goal, idOnlySchema } from '@shared';
+import { addGoalToDB, getGoalsFromDB, updateGoalInDb } from '../services/goalsService';
 
 export async function createGoal(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
@@ -17,6 +17,29 @@ export async function createGoal(req: Request, res: Response, next: NextFunction
 
     const newGoal: Goal = addGoalToDB(parsedGoal.data);
     res.status(201).json(newGoal);
+    return;
+  } catch (err) {
+    return next(err);
+  }
+}
+
+export async function updateFavorite(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const parsedId = idOnlySchema.safeParse(req.params.id);
+    const parsedIsFavorite = favoriteOnlySchema.safeParse(req.body);
+    if (!parsedId.success || !parsedIsFavorite.success) {
+      res.status(400).json({
+        message: 'Validation failed',
+        errors: `${parsedId?.error?.flatten()?.fieldErrors}/n ${parsedIsFavorite.error?.flatten()?.fieldErrors}`,
+      });
+      return;
+    }
+    const newGoal: Goal = updateGoalInDb(parsedId.data, parsedIsFavorite.data);
+    res.status(200).json(newGoal);
     return;
   } catch (err) {
     return next(err);

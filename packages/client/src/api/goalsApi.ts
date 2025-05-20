@@ -19,3 +19,16 @@ export const getGoals = async (): Promise<Goal[]> => {
   const { goals }: { goals: Goal[] } = await response.json();
   return goals;
 };
+
+export const updateGoalFavorite = async (
+  { id }: Pick<Goal, 'id'>,
+  { isFavourite }: Pick<Goal, 'isFavourite'>,
+): Promise<Goal[]> => {
+  const response = await fetch(`api/goals/${id}/favorite`, {
+    method: 'patch',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ isFavourite: isFavourite }),
+  });
+  const { goals }: { goals: Goal[] } = await response.json();
+  return goals;
+};
